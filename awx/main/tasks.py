@@ -1723,6 +1723,13 @@ class RunJob(BaseTask):
         Build command line argument list for running ansible-playbook,
         optionally using ssh-agent for public/private key authentication.
         '''
+        logger.info("extra vars: {}".format(json.dumps(job.extra_vars_dict)))
+        if "tags_to_execute" in job.extra_vars_dict:
+            if job.job_tags == "":
+                job.job_tags = job.extra_vars_dict["tags_to_execute"]
+            else:
+                job.job_tags += "," + job.extra_vars_dict["tags_to_execute"]
+        logger.info("job tags: {}".format(json.dumps(job.job_tags)))
         creds = job.machine_credential
 
         ssh_username, become_username, become_method = '', '', ''
